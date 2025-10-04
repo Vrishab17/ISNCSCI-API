@@ -1,52 +1,34 @@
-import { supabase } from '../lib/supabaseClient'
+// app/page.tsx
+import Link from 'next/link'
 
-export default async function Home() {
-  const { data, error } = await supabase
-  
-    .from('Patients')
-    .select(`"NHI Number","First Name","Middles Names","Last Name","DOB","Sex"`)
-    //.select('*')
-    .order('Date Created', { ascending: false })
-    .limit(20)
+export const dynamic = 'force-dynamic'
 
-    // FOR DEBUG PURPOSES
-    
-    /*const firstRes = await supabase
-  .from('Patients')
-  .select('*')
-  .limit(1);
-console.log('patients:', data, 'error:', error)
-console.log('First row:', firstRes.data, firstRes.error);*/
-    
-
-  if (error) {
-    return (
-      <main className="p-6">
-        <h1 className="text-xl font-bold mb-4">Patients</h1>
-        <div className="text-red-600">Error: {error.message}</div>
-      </main>
-    )
-  }
-
+export default function Landing() {
   return (
-    <main className="p-6">
-      <h1 className="text-xl font-bold mb-4">Patients</h1>
+    <main className="p-6 sm:p-10 max-w-4xl mx-auto">
+      <h1 className="text-3xl font-bold">ISNCSCI Assessments</h1>
+      <p className="text-slate-600 mt-2">
+        Enter an NHI to view patient info, past assessments, and drafts.
+      </p>
 
-      <div className="grid gap-3">
-        {(data ?? []).map((p, i) => (
-          <div key={i} className="border rounded p-3">
-            <div className="font-medium">
-              {p['First Name']} {p['Middle Names']} {p['Last Name']}
-            </div>
-            <div className="text-sm text-gray-600">
-              NHI: {p['NHI Number']} · DOB: {p['DOB']} · Sex: {p['Sex']}
-            </div>
-          </div>
-        ))}
+      {/* Simple GET form that goes to /patient?nhi=... */}
+      <form action="/patient" method="get" className="mt-8 flex gap-3">
+        <input
+          name="nhi"
+          placeholder="Enter NHI"
+          className="border rounded px-3 py-2 w-64"
+          required
+        />
+        <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+          Open
+        </button>
+      </form>
 
-        {(!data || data.length === 0) && (
-          <div className="text-gray-600">No patients found.</div>
-        )}
+      <div className="mt-6 text-sm text-slate-500">
+        Or try a test link:&nbsp;
+        <Link className="text-blue-600 underline" href="/patient?nhi=1">
+          /patient?nhi=1
+        </Link>
       </div>
     </main>
   )
